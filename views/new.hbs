@@ -1,0 +1,69 @@
+{{> header}}
+
+<div class="CircleBadge CircleBadge--medium mx-auto mb-4">
+  <img alt="" class="CircleBadge-icon" height="50" src="{{ installation.account.avatar_url }}" width="50">
+</div>
+
+<h2 class="f2 mb-4 text-center text-normal">Invite to <strong>@{{ installation.account.login }}</strong></h2>
+
+<div class="Box box-shadow p-4">
+  <form method="post">
+    <p class="f4 border-bottom pb-2 mb-4">What should their role be in the organization?</p>
+
+    <div class="form-checkbox">
+      <label class="d-block mb-2">
+        <input checked="checked" name="role" type="radio" value="member">
+        Member
+        <p class="note">
+          Members can see all other members, and can be granted access to repositories.
+          They can also create new teams and repositories.
+        </p>
+      </label>
+
+      <label class="d-block">
+        <input name="role" type="radio" value="admin">
+        Owner
+        <p class="note">
+          Owners have full administrative rights to the organization and have complete access to all
+          repositories and teams.
+        </p>
+      </label>
+    </div>
+
+    <p class="lh-expanded">
+      This link is valid
+      <select name="exp" class="form-select ml-1">
+        <option selected value="">forever</option>
+        <option value="31536000">for 1 year</option>
+        <option value="2592000">for 1 month</option>
+        <option value="604800">for 1 week</option>
+        <option value="86400">for 1 day</option>
+      </select>
+    </p>
+  </form>
+
+  <hr class="my-4">
+
+  <p>Share this link:</p>
+  <input id="link" type="text" class="form-control input-lg input-block">
+</div>
+
+<script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.form/4.2.2/jquery.form.min.js" integrity="sha384-FzT3vTVGXqf7wRfy8k4BiyzvbNfeYjK+frTVqZeNDFl8woCbF0CYG6g2fMEFFo/i" crossorigin="anonymous"></script>
+
+<script type="text/javascript">
+  var $form = $('form');
+  var $link = $('#link')
+
+  function updateLink() {
+    $form.ajaxSubmit({success: function(url) {
+      console.log("WAT?", url);
+      $link.val(url);
+    }})
+  }
+
+  $form.on('change', updateLink);
+  updateLink()
+</script>
+
+{{> footer}}
