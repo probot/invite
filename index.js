@@ -17,12 +17,12 @@ async function authenticate (req, res, next) {
   }
 }
 
-async function getInstallations(req, res, next) {
+async function getInstallations (req, res, next) {
   res.locals.installations = (await req.github.users.getInstallations({})).data.installations
   next()
 }
 
-async function findInstallation(req, res, next) {
+async function findInstallation (req, res, next) {
   res.locals.installation = res.locals.installations.find(i => {
     return i.account.login === req.params.owner
   })
