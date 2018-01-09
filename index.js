@@ -10,6 +10,7 @@ const oauth = require('./lib/oauth')
 
 async function authenticate (req, res, next) {
   if (!req.session.token) {
+    req.session = {}
     req.session.redirect = req.originalUrl
     res.redirect('/github/login')
   } else {
@@ -20,20 +21,45 @@ async function authenticate (req, res, next) {
 async function getInstallations (req, res, next) {
   let { installations } = (await req.github.users.getInstallations({})).data
 
+  // Filter out User installations
   installations = installations.filter(installation => {
     return installation.account.type === 'Organization'
   })
+
+  // Only show installations that the current user is an admin on
+  installations = await Promise.all(installations.map(async installation => {
+    const github = await req.robot.auth(installation.id)
+    try {
+      const membership = (await github.orgs.getOrgMembership({
+        org: installation.account.login,
+        username: req.session.login
+      })).data
+
+      return membership.role === 'admin' ? installation : false
+    } catch (err) {
+      req.log(err)
+      return false
+    }
+  }))
+
+  // Remove null
+  installations = installations.filter(installation => installation)
 
   res.locals.installations = installations
   next()
 }
 
 async function findInstallation (req, res, next) {
-  res.locals.installation = res.locals.installations.find(i => {
+  const installation = res.locals.installations.find(i => {
     return i.account.login === req.params.owner
   })
 
-  next()
+  if (installation) {
+    res.locals.installation = installation
+    next()
+  } else {
+    res.status(404).send('Not Found')
+  }
 }
 
 module.exports = (robot) => {
@@ -52,9 +78,14 @@ module.exports = (robot) => {
   }))
 
   app.use(async (req, res, next) => {
+    req.robot = robot
+
     if (req.session.token) {
       req.github = await robot.auth()
       req.github.authenticate({ type: 'token', token: req.session.token })
+      if (!req.session.login) {
+        req.session.login = (await req.github.users.get({})).data.login
+      }
     }
 
     next()
