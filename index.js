@@ -129,7 +129,7 @@ module.exports = (robot) => {
     }
 
     if (req.body.exp) {
-      options.exp = Number(req.body.exp)
+      options.exp = Math.floor(Date.now() / 1000) + Number(req.body.exp)
     }
 
     const token = jwt.sign(options, process.env.WEBHOOK_SECRET)
