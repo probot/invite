@@ -65,9 +65,18 @@ module.exports = (robot) => {
   oauth(app)
 
   app.get('/', authenticate, getInstallations, async (req, res) => {
-    const github = await robot.auth()
-    const info = (await github.apps.get({})).data
-    res.render('index', {installations: res.locals.installations, info})
+    const { installations } = res.locals
+    const info = (await (await robot.auth()).apps.get({})).data
+
+    // Setup URL - GitHub will redirect here after installation
+    if (req.query.installation_id) {
+      const installation = installations.find(installation => {
+        return installation.id === Number(req.query.installation_id)
+      })
+      res.redirect(`/${installation.account.login}`)
+    } else {
+      res.render('index', {installations, info})
+    }
   })
 
   app.get('/:owner', authenticate, getInstallations, findInstallation, (req, res) => {
