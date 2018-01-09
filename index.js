@@ -18,7 +18,13 @@ async function authenticate (req, res, next) {
 }
 
 async function getInstallations (req, res, next) {
-  res.locals.installations = (await req.github.users.getInstallations({})).data.installations
+  let { installations } = (await req.github.users.getInstallations({})).data
+
+  installations = installations.filter(installation => {
+    return installation.account.type === 'Organization'
+  })
+
+  res.locals.installations = installations
   next()
 }
 
