@@ -69,6 +69,11 @@ module.exports = (robot) => {
   app.set('views', path.join(__dirname, 'views'))
   hbs.registerPartials(path.join(__dirname, 'views', 'partials'))
 
+  if (process.env.FORCE_HTTPS) {
+    app.use(require('helmet')())
+    app.use(require('express-sslify').HTTPS({ trustProtoHeader: true }))
+  }
+
   app.use(bodyParser.urlencoded({extended: true}))
 
   app.use(cookieSession({
