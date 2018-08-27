@@ -30,6 +30,18 @@
       </label>
     </div>
 
+    <p class="mt-4">Optionally, you can also add them to some teams.</p>
+
+    <div class="form-checkbox">
+      {{#teams}}
+        <label class="d-block mb-2">
+          <input type="checkbox" name="teams[]" value="{{ id }}"> {{ name }}
+        </label>
+      {{/teams}}
+    </div>
+
+    <hr class="my-4">
+
     <p class="lh-expanded">
       This link is valid
       <select name="exp" class="form-select ml-1">
@@ -41,8 +53,6 @@
       </select>
     </p>
   </form>
-
-  <hr class="my-4">
 
   <p>Share this link:</p>
   <input id="link" type="text" class="form-control input-lg input-block">

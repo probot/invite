@@ -115,17 +115,28 @@ module.exports = (robot) => {
     }
   })
 
-  app.get('/:owner', authenticate, getInstallations, findInstallation, (req, res) => {
+  app.get('/:owner', authenticate, getInstallations, findInstallation, async (req, res) => {
     const { installation } = res.locals
-    res.render('new', {installation})
+    const { data: teams } = await req.github.orgs.getTeams({org: installation.account.login})
+
+    res.render('new', {installation, teams})
   })
 
-  app.post('/:owner', authenticate, getInstallations, findInstallation, (req, res) => {
+  app.post('/:owner', authenticate, getInstallations, findInstallation, async (req, res) => {
     const { installation } = res.locals
+
     const options = {
       sub: installation.account.login,
       iss: installation.id,
       role: req.body.role
+    }
+
+    // Ensure user has access to teams
+    if (req.body.teams) {
+      const { data: visibleTeams } = await req.github.orgs.getTeams({org: installation.account.login})
+      options.teams = req.body.teams.filter(id => {
+        return visibleTeams.filter(team => team.id === Number(id))
+      })
     }
 
     if (req.body.exp) {
@@ -156,6 +167,13 @@ module.exports = (robot) => {
       username: user.login,
       role: options.role
     })
+
+    if (options.teams) {
+      robot.log({user, teams: options.teams}, 'Adding user to teams')
+      await Promise.all(options.teams.map(async id => {
+        await github.orgs.addTeamMembership({id, username: user.login})
+      }))
+    }
 
     res.redirect(`https://github.com/orgs/${options.sub}/invitation`)
   })
