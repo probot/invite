@@ -14,6 +14,12 @@ npm install
 npm start
 ```
 
+## Contribute
+
+If you have suggestions for how this app could be improved, or want to report a bug, open an issue! We'd love all and any contributions.
+
+Note that all interactions fall under the [Probot Code of Conduct](https://github.com/probot/probot/blob/master/CODE_OF_CONDUCT.md).
+
 ## License
 
 [ISC](LICENSE) © 2017-2018 Brandon Keepers
