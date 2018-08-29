@@ -109,10 +109,12 @@ module.exports = (robot) => {
       const installation = installations.find(installation => {
         return installation.id === Number(req.query.installation_id)
       })
-      res.redirect(`/${installation.account.login}`)
-    } else {
-      res.render('index', {installations, info})
+      if (installation) {
+        return res.redirect(`/${installation.account.login}`)
+      }
     }
+
+    res.render('index', {installations, info})
   })
 
   app.get('/:owner', authenticate, getInstallations, findInstallation, async (req, res) => {
