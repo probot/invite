@@ -1,4 +1,4 @@
-
+/* eslint:disable camelcase */
 const path = require('path')
 const express = require('express')
 const hbs = require('hbs')
@@ -76,11 +76,15 @@ module.exports = (robot) => {
 
   app.use(bodyParser.urlencoded({extended: true}))
 
+  app.use('/static/', express.static(path.join(__dirname, 'static')))
+
   app.use(cookieSession({
     name: 'session',
     keys: [process.env.WEBHOOK_SECRET],
     maxAge: 30 * 24 * 60 * 60 * 1000 // 30 days
   }))
+
+  oauth(app)
 
   app.use(async (req, res, next) => {
     req.robot = robot
@@ -95,10 +99,6 @@ module.exports = (robot) => {
 
     next()
   })
-
-  app.use('/static/', express.static(path.join(__dirname, 'static')))
-
-  oauth(app)
 
   app.get('/', authenticate, getInstallations, async (req, res) => {
     const { installations } = res.locals
