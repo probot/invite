@@ -1,6 +1,6 @@
 const request = require('supertest')
 const nock = require('nock')
-const {probot} = require('.')
+const { probot } = require('.')
 
 describe('OAuth', () => {
   describe('GET /github/login', () => {

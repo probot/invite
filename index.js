@@ -74,7 +74,7 @@ module.exports = (robot) => {
     app.use(require('express-sslify').HTTPS({ trustProtoHeader: true }))
   }
 
-  app.use(bodyParser.urlencoded({extended: true}))
+  app.use(bodyParser.urlencoded({ extended: true }))
 
   app.use('/static/', express.static(path.join(__dirname, 'static')))
 
@@ -114,14 +114,14 @@ module.exports = (robot) => {
       }
     }
 
-    res.render('index', {installations, info})
+    res.render('index', { installations, info })
   })
 
   app.get('/:owner', authenticate, getInstallations, findInstallation, async (req, res) => {
     const { installation } = res.locals
-    const { data: teams } = await req.github.orgs.getTeams({org: installation.account.login})
+    const { data: teams } = await req.github.orgs.getTeams({ org: installation.account.login })
 
-    res.render('new', {installation, teams})
+    res.render('new', { installation, teams })
   })
 
   app.post('/:owner', authenticate, getInstallations, findInstallation, async (req, res) => {
@@ -135,7 +135,7 @@ module.exports = (robot) => {
 
     // Ensure user has access to teams
     if (req.body.teams) {
-      const { data: visibleTeams } = await req.github.orgs.getTeams({org: installation.account.login})
+      const { data: visibleTeams } = await req.github.orgs.getTeams({ org: installation.account.login })
       options.teams = req.body.teams.filter(id => {
         return visibleTeams.filter(team => team.id === Number(id))
       })
@@ -149,7 +149,7 @@ module.exports = (robot) => {
 
     const link = `${req.protocol}://${req.get('host')}/join/${token}`
 
-    req.log({link, options}, 'Generating new token')
+    req.log({ link, options }, 'Generating new token')
     res.send(link)
   })
 
@@ -160,7 +160,7 @@ module.exports = (robot) => {
 
     const user = (await req.github.users.get({})).data
 
-    req.log({user, options}, 'Adding user to organization')
+    req.log({ user, options }, 'Adding user to organization')
 
     const github = await robot.auth(options.iss)
 
@@ -171,9 +171,9 @@ module.exports = (robot) => {
     })
 
     if (options.teams) {
-      robot.log({user, teams: options.teams}, 'Adding user to teams')
+      robot.log({ user, teams: options.teams }, 'Adding user to teams')
       await Promise.all(options.teams.map(async id => {
-        await github.orgs.addTeamMembership({id, username: user.login})
+        await github.orgs.addTeamMembership({ id, username: user.login })
       }))
     }
 

@@ -1,5 +1,5 @@
 const request = require('supertest')
-const {probot} = require('.')
+const { probot } = require('.')
 
 describe('Invitations', () => {
   describe('GET /', () => {

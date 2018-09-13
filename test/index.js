@@ -8,4 +8,4 @@ const robot = probot.load(app)
 
 nock.enableNetConnect('127.0.0.1')
 
-module.exports = {probot, robot}
+module.exports = { probot, robot }
