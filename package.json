@@ -40,10 +40,5 @@
       ".env",
       "."
     ]
-  },
-  "renovate": {
-    "extends": [
-      "github>octokit/.github"
-    ]
   }
 }
