@@ -22,7 +22,7 @@
     "localtunnel": "^1.8.2",
     "nock": "^9.1.5",
     "nodemon": "^1.18.3",
-    "standard": "^10.0.3",
+    "standard": "^17.0.0",
     "supertest": "^3.0.0"
   },
   "engines": {
