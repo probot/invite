@@ -19,7 +19,7 @@
   },
   "devDependencies": {
     "jest": "^21.2.1",
-    "localtunnel": "^1.8.2",
+    "localtunnel": "^2.0.0",
     "nock": "^9.1.5",
     "nodemon": "^1.18.3",
     "standard": "^10.0.3",
